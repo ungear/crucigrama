@@ -4,6 +4,6 @@ namespace Crucigrama.Interfaces
 {
     public interface ICrosswordService
     {
-        public Crossword GenerateCrossword(IEnumerable<string> words);
+        public Crossword GenerateCrossword(string[] words);
     }
 }

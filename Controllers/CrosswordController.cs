@@ -17,7 +17,7 @@ namespace Crucigrama.Controllers
         [HttpGet(Name = "GetCrossword")]
         public Crossword GetCrossword()
         {
-            Crossword crossword = _crosswordService.GenerateCrossword(new string[] { "banana", "apple"});
+            Crossword crossword = _crosswordService.GenerateCrossword(new string[] { "banana", "apple", "milk", "execution", "success", "exit", "similar"});
             return crossword;
         }
     }

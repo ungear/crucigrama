@@ -12,11 +12,28 @@ namespace Crucigrama.Services
             _exportService = exportService;
         }
 
-        public Crossword GenerateCrossword(IEnumerable<string> words) {
+        public Crossword GenerateCrossword(string[] words) {
             var crossword = new Crossword();
-            crossword.AddAnswer(0, 0, "banana", Direction.Horizontal);
-            crossword.AddAnswer(0, 2, "or", Direction.Horizontal);
-            crossword.TryAddAnswer("apple", Direction.Vertical);
+            var wordsList = words.ToList();
+
+            crossword.AddAnswer(0, 0, words[0], Direction.Horizontal);
+            wordsList.RemoveAt(0);
+            var round = 1;
+            var attemptsNumber = 2;
+            while (round <= attemptsNumber && wordsList.Count > 0) {
+                for (int i = 0; i < wordsList.Count; i++) {
+                    var isSuccess = crossword.TryAddAnswer(wordsList[i], Direction.Horizontal);
+                    if(!isSuccess) {
+                        isSuccess = crossword.TryAddAnswer(wordsList[i], Direction.Vertical);
+                    }
+                    if (isSuccess)
+                    {
+                        wordsList.Remove(wordsList[i]);
+                        i--;
+                    }
+                }
+                round++;            
+            }
 
             _exportService.ExportToCsvOnDisc(crossword);
             return crossword;
