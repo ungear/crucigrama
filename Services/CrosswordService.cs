@@ -35,6 +35,7 @@ namespace Crucigrama.Services
                 round++;            
             }
 
+            crossword.NormalizeCoords();
             _exportService.ExportToCsvOnDisc(crossword);
             return crossword;
         }

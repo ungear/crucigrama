@@ -123,5 +123,14 @@ namespace Crucigrama.Models
             return false;
 
         }
+
+        public void NormalizeCoords() { 
+            var minX = Cells.Select(x => x.X).Min();
+            var minY = Cells.Select(x => x.Y).Min();
+            Cells.ForEach(c => {
+                c.X = c.X - minX;
+                c.Y = c.Y - minY;
+            });
+        }
     }
 }
