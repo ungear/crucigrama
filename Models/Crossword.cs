@@ -1,4 +1,6 @@
-﻿namespace Crucigrama.Models
+﻿using System.Drawing;
+
+namespace Crucigrama.Models
 {
     public enum Direction { 
         Horizontal,
@@ -24,13 +26,15 @@
             int currentX = startX;
             int currentY = startY;
             for(var index = 0; index < word.Length; index++) {
-                var cell = new Cell { 
-                    X = currentX,
-                    Y = currentY,
-                    Letter = word[index],
-                    WordId = answerIndex,
-                };
-                Cells.Add(cell);
+                var existingCellWithSameCoodinates = Cells.Find(c => c.X == currentX && c.Y == currentY);
+                if (existingCellWithSameCoodinates != null) {
+                    if (existingCellWithSameCoodinates.Letter != word[index]) 
+                        throw new Exception("These coordinates are occupied with a cell with a different letter");
+                    existingCellWithSameCoodinates.WordIds.Add(answerIndex);
+                } else {
+                    var cell = new Cell(currentX, currentY, word[index], answerIndex );
+                    Cells.Add(cell);
+                }
 
                 if (direction == Direction.Horizontal)
                 {

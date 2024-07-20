@@ -7,7 +7,8 @@ namespace Crucigrama.Services
     {
         public Crossword GenerateCrossword(IEnumerable<string> words) {
             var crossword = new Crossword();
-            crossword.AddAnswer(0,0,words.ToList()[0], Direction.Horizontal);
+            crossword.AddAnswer(0, 0, "banana", Direction.Horizontal);
+            crossword.AddAnswer(1, 0, "apple", Direction.Vertical);
             return crossword;
         }
     }
