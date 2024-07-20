@@ -30,8 +30,8 @@ namespace Crucigrama.Models
 
             int currentX = startX;
             int currentY = startY;
-
             var crossingCells = new List<Cell>();
+
             for(var index = 0; index < word.Length; index++) {
                 var existingCellWithSameCoodinates = Cells.Find(c => c.X == currentX && c.Y == currentY);
                 if (existingCellWithSameCoodinates != null) {
@@ -58,7 +58,7 @@ namespace Crucigrama.Models
                 }
             }
 
-            // make crossing a crossing cell and neibourg cells unavailable for future crossing
+            // make a crossing cell and neibourg cells unavailable for future crossing
             foreach (var crossingCell in crossingCells) {
                 HorizontalLinkingTargets.Remove(crossingCell);
                 VerticalLinkingTargets.Remove(crossingCell);
@@ -77,8 +77,51 @@ namespace Crucigrama.Models
             }
         }
 
-        //public bool TryAddingAnswer(string word, Direction direction) { 
-        
-        //}
+        public bool TryAddAnswer(string word, Direction direction)
+        {
+            var linkingTargets = direction == Direction.Horizontal
+                ? HorizontalLinkingTargets
+                : VerticalLinkingTargets;
+
+            foreach (var cell in linkingTargets) {
+                var firstCrossingIndex = word.IndexOf(cell.Letter);
+                if (firstCrossingIndex >= 0) {
+                    var startX = direction == Direction.Horizontal
+                        ? cell.X - firstCrossingIndex
+                        : cell.X;
+                    var startY = direction == Direction.Horizontal
+                        ? cell.Y
+                        : cell.Y - firstCrossingIndex;
+
+                    // cells which will be occupied by the word if we start it from the selecetd point
+                    var potentialCells = word.Select((char letter, int index) => {
+                        var x = direction == Direction.Horizontal
+                            ? startX + index
+                            : startX;
+                        var y = direction == Direction.Horizontal
+                            ? startY
+                            : startY + index;
+                        return new { X = x, Y = y, Letter = letter }; 
+                    });
+
+                    // existing cells on the word path
+                    var potentialCrossings = potentialCells
+                        .Select(pc => new { existingCell = Cells.FirstOrDefault(c => c.X == pc.X && c.Y == pc.Y), potentialCell = pc })
+                        .Where(x => x.existingCell != null);
+
+                    // check if ALL potentialCrossings are eligible
+                    var isExistingCellsOk = potentialCrossings.All(x => 
+                        linkingTargets.Contains(x.existingCell) && x.existingCell.Letter == x.potentialCell.Letter);
+
+                    if (isExistingCellsOk) { 
+                        AddAnswer(startX, startY, word, direction);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+
+        }
     }
 }
