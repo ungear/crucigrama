@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICrosswordService, CrosswordService>();
+builder.Services.AddScoped<IExportService, ExportService>();
 
 var app = builder.Build();
 
