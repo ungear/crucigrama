@@ -1,5 +1,7 @@
+using Crucigrama.Db;
 using Crucigrama.Interfaces;
 using Crucigrama.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICrosswordService, CrosswordService>();
 builder.Services.AddScoped<IExportService, ExportService>();
+
+var connectionString = "";
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 0));
+
+// Replace 'YourDbContext' with the name of your own DbContext derived class.
+builder.Services.AddDbContext<CrucigramaContext>(
+    dbContextOptions => dbContextOptions
+        .UseMySql(connectionString, serverVersion)
+        // The following three options help with debugging, but should
+        // be changed or removed for production.
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+);
 
 var app = builder.Build();
 
