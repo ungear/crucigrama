@@ -15,8 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICrosswordService, CrosswordService>();
 builder.Services.AddScoped<IExportService, ExportService>();
 
-var connectionString = "";
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 0));
+var connectionString = builder.Configuration["Connection:CrucigramaDatabase"];
 
 // Replace 'YourDbContext' with the name of your own DbContext derived class.
 builder.Services.AddDbContext<CrucigramaContext>(
